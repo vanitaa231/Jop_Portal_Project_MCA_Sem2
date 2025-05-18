@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
@@ -9,6 +9,7 @@ import axios from 'axios'
 import { USER_API_END_POINT } from '@/utils/constant'
 import { setUser } from '@/redux/authSlice'
 import { toast } from 'sonner'
+import PropTypes from 'prop-types';
 
 const UpdateProfileDialog = ({ open, setOpen }) => {
     const [loading, setLoading] = useState(false);
@@ -17,9 +18,9 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
     const [input, setInput] = useState({
         fullname: user?.fullname || "",
         email: user?.email || "",
-        phoneNumber: user?.phoneNumber || "",
+        phoneNumber: user?.profile?.phoneNumber || "",
         bio: user?.profile?.bio || "",
-        skills: user?.profile?.skills?.map(skill => skill) || "",
+        skills: user?.profile?.skills?.join(', ') || "",//map(skill => skill) || "",
         file: user?.profile?.resume || ""
     });
     const dispatch = useDispatch();
@@ -32,16 +33,24 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         const file = e.target.files?.[0];
         setInput({ ...input, file })
     }
-
+    
+    
     const submitHandler = async (e) => {
+      
         e.preventDefault();
         const formData = new FormData();
+         const formattedSkills = input.skills 
+        ? (Array.isArray(input.skills) 
+            ? input.skills 
+            : input.skills.split(',').map(s => s.trim()))
+        : [];
+
         formData.append("fullname", input.fullname);
         formData.append("email", input.email);
         formData.append("phoneNumber", input.phoneNumber);
         formData.append("bio", input.bio);
-        formData.append("skills", input.skills);
-        if (input.file) {
+        formData.append("skills", formattedSkills.join(',')); // Always send as string
+        if (input.file && typeof input.file !== "string") {
             formData.append("file", input.file);
         }
         try {
@@ -53,8 +62,10 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                 withCredentials: true
             });
             if (res.data.success) {
-                dispatch(setUser(res.data.user));
-                toast.success(res.data.message);
+            dispatch(setUser(res.data.user));
+            toast.success(res.data.message);
+            setOpen(false);
+                return;
             }
         } catch (error) {
             console.log(error);
@@ -62,7 +73,6 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         } finally{
             setLoading(false);
         }
-        setOpen(false);
         console.log(input);
     }
 
@@ -70,8 +80,8 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
 
     return (
         <div>
-            <Dialog open={open}>
-                <DialogContent className="sm:max-w-[425px]" onInteractOutside={() => setOpen(false)}>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent className="sm:max-w-[425px]" onInteractOutside={() => setOpen(false)} aria-describedby="dialog-description">
                     <DialogHeader>
                         <DialogTitle>Update Profile</DialogTitle>
                     </DialogHeader>
@@ -81,7 +91,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                                 <Label htmlFor="name" className="text-right">Name</Label>
                                 <Input
                                     id="name"
-                                    name="name"
+                                    name="fullname"
                                     type="text"
                                     value={input.fullname}
                                     onChange={changeEventHandler}
@@ -100,10 +110,11 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                                 />
                             </div>
                             <div className='grid grid-cols-4 items-center gap-4'>
-                                <Label htmlFor="number" className="text-right">Number</Label>
+                                <Label htmlFor="number" className="text-right">Phone Number</Label>
                                 <Input
                                     id="number"
-                                    name="number"
+                                    name="phoneNumber"
+                                    type="text"
                                     value={input.phoneNumber}
                                     onChange={changeEventHandler}
                                     className="col-span-3"
@@ -152,5 +163,9 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         </div>
     )
 }
+UpdateProfileDialog.propTypes = {
+    open: PropTypes.bool.isRequired,
+    setOpen: PropTypes.func.isRequired,
+};
 
-export default UpdateProfileDialog
+export default UpdateProfileDialog;

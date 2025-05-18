@@ -80,7 +80,7 @@ const Navbar = () => {
               <PopoverTrigger asChild>
                 <Avatar className="cursor-pointer">
                 <AvatarImage
-                  src={user?.profile?.profilePhoto ||
+                  src={user?.profilePhoto ||
                     "https://img.freepik.com/premium-vector/avatar-profile-vector-illustrations-website-social-networks-user-profile-icon_495897-224.jpg"
                     }
                   alt="User Avatar"

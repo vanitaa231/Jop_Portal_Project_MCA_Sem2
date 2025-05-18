@@ -29,15 +29,16 @@ const User = sequelize.define("User", {
     defaultValue: "No bio available"
   },
   skills: {
-    type: DataTypes.STRING,
-  allowNull: true,
+  type: DataTypes.STRING, // Store as string in DB
   get() {
-    const rawValue = this.getDataValue("skills");
-    return rawValue ? rawValue.split(",") : [];
+    const rawValue = this.getDataValue('skills');
+    return rawValue ? rawValue.split(',') : [];
   },
   set(value) {
-    this.setDataValue("skills", Array.isArray(value) ? value.join(",") : value);
-  },
+    this.setDataValue('skills', 
+      Array.isArray(value) ? value.join(',') : value
+    );
+  }
   },
   password: {
     type: DataTypes.STRING,
@@ -46,7 +47,14 @@ const User = sequelize.define("User", {
   role: {
     type: DataTypes.STRING,
     defaultValue: "user"
-  }
+  },
+  resume: {
+    type: DataTypes.STRING,
+    validate: {
+            isUrl: true
+        }
+  },
+
 }, {
   tableName: "users"
 });

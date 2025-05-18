@@ -17,8 +17,8 @@ User.hasMany(Job, { foreignKey: "createdBy" });
 Job.belongsTo(User, { foreignKey: "createdBy" });
 
 // Application belongs to a Job
-Job.hasMany(Application, { foreignKey: 'jobId' });
-Application.belongsTo(Job, { foreignKey: 'jobId' });
+Job.hasMany(Application, {as: "Applications", foreignKey: 'job_id' });
+Application.belongsTo(Job, { foreignKey: 'job_id' });
 
 // Application belongs to a User (applicant)
 User.hasMany(Application, { foreignKey: 'applicantId' });

@@ -25,7 +25,7 @@ const Browse = () => {
                     {
                         allJobs.map((job) => {
                             return (
-                                <Job key={job._id} job={job}/>
+                                <Job key={job.job_id} job={job}/>
                             )
                         })
                     }

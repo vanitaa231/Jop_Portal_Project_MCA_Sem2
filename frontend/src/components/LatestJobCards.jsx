@@ -1,11 +1,11 @@
-import React from 'react'
 import { Badge } from './ui/badge'
 import { useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types';
 
 const LatestJobCards = ({job}) => {
     const navigate = useNavigate();
     return (
-        <div onClick={()=> navigate(`/description/${job._id}`)} className='p-5 rounded-md shadow-xl bg-white border border-gray-100 cursor-pointer'>
+        <div onClick={()=> navigate(`/description/${job.job_id}`)} className='p-5 rounded-md shadow-xl bg-white border border-gray-100 cursor-pointer'>
             <div>
                 <h1 className='font-medium text-lg'>{job?.company?.name}</h1>
                 <p className='text-sm text-gray-500'>India</p>
@@ -23,5 +23,19 @@ const LatestJobCards = ({job}) => {
         </div>
     )
 }
+
+LatestJobCards.propTypes = {
+    job: PropTypes.shape({
+        job_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        company: PropTypes.shape({
+            name: PropTypes.string,
+        }),
+        title: PropTypes.string,
+        description: PropTypes.string,
+        position: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        jobType: PropTypes.string,
+        salary: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    }).isRequired,
+};
 
 export default LatestJobCards

@@ -37,7 +37,7 @@ export const register = async (req, res) => {
             password: hashedPassword,
             role,
             profilePhoto: cloudResponse.secure_url,  // save cloudinary URL
-            
+            resume: cloudResponse.secure_url, // save cloudinary URL
         });
         console.log("Creating user...");
         return res.status(201).json({
@@ -99,6 +99,12 @@ export const login = async (req, res) => {
       expiresIn: "1d",
     });
     console.log("JWT Token Generated:", token);
+    // let resume;
+    //  if (req.file) {
+    //         const fileUri = getDataUri(req.file);
+    //         const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+    //         resume = cloudResponse.secure_url;
+    //     }
     // ✅ Create a safe user object to return (not raw Sequelize instance)
     const userData = {
       id: user.id,
@@ -108,9 +114,12 @@ export const login = async (req, res) => {
       profile: {
         profilePhoto: user.profilePhoto || "",
         bio: user.bio || "",
+        phoneNumber: user.phoneNumber||"",     // ✅ ADD THIS
+        skills: user.skills || [],   
+        resume: user.resume || "", 
       },
     };
-
+    
     return res
       .status(200)
       .cookie("token", token, {
@@ -150,56 +159,67 @@ export const logout = async (req, res) => {
 export const updateProfile = async (req, res) => {
     try {
         const { fullname, email, phoneNumber, bio, skills } = req.body;
-        
+        let resume;
         const file = req.file;
-        const fileUri = getDataUri(file);
-        const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-
-        let skillsArray;
-        if (skills) {
-            skillsArray = skills.split(",");
+        
+        if (file) {
+            try {
+                const fileUri = getDataUri(file);
+                const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+                resume = cloudResponse.secure_url;
+            } catch (err) {
+                console.error("Cloudinary upload failed:", err);
+                return res.status(500).json({
+                    message: "File upload failed.",
+                    success: false,
+                });
+            }
         }
 
-        const userId = req.userId; // Assuming you have middleware for authentication
+        const userId = req.userId;
         let user = await User.findByPk(userId);
-
+        
         if (!user) {
-            return res.status(400).json({
+            return res.status(404).json({  // Changed to 404 for "not found"
                 message: "User not found.",
                 success: false
             });
         }
 
+        // Update user fields
         if (fullname) user.fullname = fullname;
         if (email) user.email = email;
         if (phoneNumber) user.phoneNumber = phoneNumber;
-        if (bio) user.profile.bio = bio;
-        if (skills) user.profile.skills = skillsArray;
-
-        if (cloudResponse) {
-            user.profilePhoto = cloudResponse.secure_url; // Save the cloudinary URL
-        }
+        if (bio) user.bio = bio;
+        if (skills) user.skills = skills; // Store as string
+        if (resume) user.resume = resume;
 
         await user.save();
 
-        user = {
-            id: user.id,  // Use `id` for Sequelize
+        // Create response object (don't reuse variable names)
+        const responseData = {
+            userId: user.userId,
             fullname: user.fullname,
             email: user.email,
-            phoneNumber: user.phoneNumber,
             role: user.role,
-            profilePhoto: user.profilePhoto
+            profile: {
+                phoneNumber: user.phoneNumber,
+                bio: user.bio,
+                skills: user.skills , // Convert back to array for response
+                profilePhoto: user.profilePhoto,
+                resume: user.resume
+            }
         };
 
         return res.status(200).json({
             message: "Profile updated successfully.",
-            user,
+            user: responseData,
             success: true
         });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            message: "Error occurred while updating profile.",
+        console.error("Update error:", error);  // Changed to error for stack trace
+        return res.status(500).json({
+            message: error.message || "Error occurred while updating profile.",  // Include actual error message
             success: false
         });
     }

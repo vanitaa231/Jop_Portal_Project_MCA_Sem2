@@ -60,7 +60,7 @@ export const getAppliedJobs = async (req, res) => {
         const userId = req.userId;
 
         const applications = await Application.findAll({
-            where: { applicantId: req.User.userId },
+            where: { applicantId: req.userId },
             order: [['createdAt', 'DESC']],
             include: {
                 model: Job,
@@ -92,7 +92,7 @@ export const getAppliedJobs = async (req, res) => {
 // Admin gets all applicants for a job
 export const getApplicants = async (req, res) => {
     try {
-        const jobId = req.params.id;
+        const jobId = req.params.job_id;
 
         const job = await Job.findByPk(jobId, {
             include: [{
@@ -127,7 +127,7 @@ export const getApplicants = async (req, res) => {
 export const updateStatus = async (req, res) => {
     try {
         const { status } = req.body;
-        const applicationId = req.params.id;
+        const applicationId = req.params.userId;
 
         if (!status) {
             return res.status(400).json({

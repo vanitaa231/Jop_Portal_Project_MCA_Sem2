@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 import { useParams } from 'react-router-dom';
@@ -11,20 +11,20 @@ import { toast } from 'sonner';
 const JobDescription = () => {
     const {singleJob} = useSelector(store => store.job);
     const {user} = useSelector(store=>store.auth);
-    const isIntiallyApplied = singleJob?.applications?.some(application => application.applicant === user?._id) || false;
+    const isIntiallyApplied = singleJob?.applications?.some(application => application.applicant === user?.userId) || false;
     const [isApplied, setIsApplied] = useState(isIntiallyApplied);
 
     const params = useParams();
     const jobId = params.id;
     const dispatch = useDispatch();
-
+   
     const applyJobHandler = async () => {
         try {
             const res = await axios.get(`${APPLICATION_API_END_POINT}/apply/${jobId}`, {withCredentials:true});
             
             if(res.data.success){
                 setIsApplied(true); // Update the local state
-                const updatedSingleJob = {...singleJob, applications:[...singleJob.applications,{applicant:user?._id}]}
+                const updatedSingleJob = {...singleJob, applications:[...singleJob.applications,{applicant:user?.userId}]}
                 dispatch(setSingleJob(updatedSingleJob)); // helps us to real time UI update
                 toast.success(res.data.message);
 
@@ -38,10 +38,10 @@ const JobDescription = () => {
     useEffect(()=>{
         const fetchSingleJob = async () => {
             try {
-                const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`,{withCredentials:true});
+                const res = await axios.get(`${JOB_API_END_POINT}/getById/${jobId}`,{withCredentials:true});
                 if(res.data.success){
                     dispatch(setSingleJob(res.data.job));
-                    setIsApplied(res.data.job.applications.some(application=>application.applicant === user?._id)) // Ensure the state is in sync with fetched data
+                    setIsApplied(res.data.job.applications.some(application=>application.applicant === user?.userId)) // Ensure the state is in sync with fetched data
                 }
             } catch (error) {
                 console.log(error);

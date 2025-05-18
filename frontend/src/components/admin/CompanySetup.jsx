@@ -13,7 +13,7 @@ import useGetCompanyById from '@/hooks/useGetCompanyById'
 
 const CompanySetup = () => {
     const params = useParams();
-    console.log("this is  params id in company setup module :",params);
+    
     useGetCompanyById(params.id);
     const [input, setInput] = useState({
         name: "",

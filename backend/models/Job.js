@@ -3,6 +3,11 @@ import sequelize from "../utils/database.js";
 import Company from "./Company.js"; // ✅ Import Company model
 
 const Job = sequelize.define("Job", {
+    job_id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
     title: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -42,6 +47,10 @@ const Job = sequelize.define("Job", {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+//    company: {
+//         type: DataTypes.STRING,
+//         allowNull: false,
+//     },
     companyId: { // ✅ Foreign key to link Job with Company
         type: DataTypes.INTEGER,
         allowNull: false,
