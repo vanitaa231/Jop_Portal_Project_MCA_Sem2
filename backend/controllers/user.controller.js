@@ -98,7 +98,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(tokenData, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-    console.log("JWT Token Generated:", token);
+    // console.log("JWT Token Generated:", token);
     // let resume;
     //  if (req.file) {
     //         const fileUri = getDataUri(req.file);

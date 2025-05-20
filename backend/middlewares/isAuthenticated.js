@@ -6,9 +6,9 @@ const isAuthenticated = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ message: "User not authenticated", success: false });
     }
-console.log("cookieeeeeee:", req.cookies);
+// console.log("cookieeeeeee:", req.cookies);
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // ✅ Use your own JWT_SECRET
-    console.log("Decoded JWT:", decoded);
+    // console.log("Decoded JWT:", decoded);
     req.userId = decoded.userId;
     next();
   } catch (error) {

@@ -38,7 +38,7 @@ const Login = () => {
             });
             if (res.data.success) {
                 dispatch(setUser(res.data.user));
-                console.log(res.data);
+                // console.log(res.data);
                 navigate("/");
                 toast.success(res.data.message);
             }
@@ -87,12 +87,12 @@ const Login = () => {
                                 <Input
                                     type="radio"
                                     name="role"
-                                    value="student"
-                                    checked={input.role === 'student'}
+                                    value="Job Seeker"
+                                    checked={input.role === 'Job Seeker'}
                                     onChange={changeEventHandler}
                                     className="cursor-pointer"
                                 />
-                                <Label htmlFor="r1">Student</Label>
+                                <Label htmlFor="r1">Seeker</Label>
                             </div>
                             <div className="flex items-center space-x-2">
                                 <Input

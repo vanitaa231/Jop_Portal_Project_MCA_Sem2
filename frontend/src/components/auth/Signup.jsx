@@ -33,10 +33,56 @@ const Signup = () => {
     const changeFileHandler = (e) => {
         setInput({ ...input, file: e.target.files?.[0] });
     }
+    function validatePassword(password) {
+    const validations = {
+        minLength: password.length >= 8,
+        hasUppercase: /[A-Z]/.test(password),
+        hasLowercase: /[a-z]/.test(password),
+        hasDigit: /[0-9]/.test(password),
+        hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+        noSpaces: !/\s/.test(password),
+        // passwordsMatch: confirmPassword ? password === confirmPassword : true
+    };
 
+    const isValid = Object.values(validations).every(v => v === true);
+
+    return {
+        isValid,
+        validations
+    };
+}
     const submitHandler = async (e) => {
         e.preventDefault();
+        if (!input.fullname || !input.email || !input.phoneNumber || !input.password) {
+            toast.error("Please fill in all required fields.");
+            return;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(input.email)) {
+            toast.error("Please enter a valid email address.");
+            return;
+        }
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(input.phoneNumber)) {
+            toast.error("Please enter a valid 10-digit phone number.");
+            return;
+        }
 
+        const result = validatePassword(input.password);
+        if (result.isValid) {
+            console.log("Password is valid!");
+        } else {
+            console.log("Password validation failed:");
+            for (const [rule, passed] of Object.entries(result.validations)) {
+                if (!passed) {
+                    console.log(`- Failed: ${rule}`);
+                }
+            }
+        }
+        // if (input.password.length < 6) {
+        //     toast.error("Password must be at least 6 characters long.");
+        //     return;
+        // }
         // Validate role selection
         if (!input.role) {
             toast.error("Please select a role");
@@ -141,12 +187,12 @@ const Signup = () => {
                                 <Input
                                     type="radio"
                                     name="role"
-                                    value="student"
-                                    checked={input.role === 'student'}
+                                    value="Job Seeker"
+                                    checked={input.role === 'Job Seeker'}
                                     onChange={changeEventHandler}
                                     className="cursor-pointer"
                                 />
-                                <Label htmlFor="r1">Student</Label>
+                                <Label htmlFor="r1">Seeker</Label>
                             </div>
                             <div className="flex items-center space-x-2">
                                 <Input

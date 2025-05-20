@@ -18,7 +18,7 @@ export const applyJob = async (req, res) => {
 
         // Check if application already exists
         const existingApplication = await Application.findOne({
-            where: { jobId, applicantId: userId }
+            where: { job_id: jobId, userId: userId }
         });
 
         if (existingApplication) {
@@ -39,8 +39,8 @@ export const applyJob = async (req, res) => {
 
         // Create new application
         await Application.create({
-            jobId,
-            applicantId: userId
+            job_id: jobId,
+            userId: userId
         });
 
         return res.status(201).json({
@@ -54,13 +54,12 @@ export const applyJob = async (req, res) => {
     }
 };
 
-// Get all jobs applied by student
+// Get all jobs applied by job seeker
 export const getAppliedJobs = async (req, res) => {
     try {
         const userId = req.userId;
-
         const applications = await Application.findAll({
-            where: { applicantId: req.userId },
+            where: { userId: req.userId },
             order: [['createdAt', 'DESC']],
             include: {
                 model: Job,
@@ -77,7 +76,7 @@ export const getAppliedJobs = async (req, res) => {
                 success: false
             });
         }
-
+// console.log("This is applications",applications);
         return res.status(200).json({
             applications,
             success: true
@@ -92,11 +91,13 @@ export const getAppliedJobs = async (req, res) => {
 // Admin gets all applicants for a job
 export const getApplicants = async (req, res) => {
     try {
-        const jobId = req.params.job_id;
-
-        const job = await Job.findByPk(jobId, {
+        const job_id = req.params.id;
+        // console.log("This is job id",job_id);
+        const job = await Job.findByPk(job_id, {
             include: [{
                 model: Application,
+                as: "Applications",
+                where: { job_id: job_id },
                 include: {
                     model: User,
                     as: "applicant"
@@ -104,7 +105,7 @@ export const getApplicants = async (req, res) => {
                 order: [['createdAt', 'DESC']]
             }]
         });
-
+        // console.log("This is job",job);
         if (!job) {
             return res.status(404).json({
                 message: "Job not found.",
@@ -127,7 +128,7 @@ export const getApplicants = async (req, res) => {
 export const updateStatus = async (req, res) => {
     try {
         const { status } = req.body;
-        const applicationId = req.params.userId;
+        const applicationId = req.params.id;
 
         if (!status) {
             return res.status(400).json({
@@ -143,7 +144,6 @@ export const updateStatus = async (req, res) => {
                 success: false
             });
         }
-
         application.status = status.toLowerCase();
         await application.save();
 

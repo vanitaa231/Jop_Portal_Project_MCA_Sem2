@@ -54,6 +54,10 @@ const Job = sequelize.define("Job", {
     companyId: { // ✅ Foreign key to link Job with Company
         type: DataTypes.INTEGER,
         allowNull: false,
+    },
+    closingAt: {
+        type: DataTypes.DATE,
+        allowNull: false
     }
 }, {
     timestamps: true,

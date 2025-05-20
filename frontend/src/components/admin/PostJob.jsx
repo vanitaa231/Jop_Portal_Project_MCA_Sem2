@@ -10,6 +10,9 @@ import { JOB_API_END_POINT } from '@/utils/constant'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 
 //const companyArray = [];
 
@@ -23,7 +26,8 @@ const PostJob = () => {
         jobType: "",
         experience: "",
         position: 0,
-        companyId: ""
+        companyId: "",
+        closingAt: null
     });
     const [loading, setLoading]= useState(false);
     const navigate = useNavigate();
@@ -42,12 +46,14 @@ const PostJob = () => {
         e.preventDefault();
         try {
             setLoading(true);
+            // console.log("This is input",input);
             const res = await axios.post(`${JOB_API_END_POINT}/post`, input,{
                 headers:{
                     'Content-Type':'application/json'
                 },
                 withCredentials:true
             });
+            // console.log("This is response",res);
             if(res.data.success){
                 toast.success(res.data.message);
                 navigate("/admin/jobs");
@@ -166,6 +172,16 @@ const PostJob = () => {
                                 </Select>
                             )
                         }
+                    </div>
+                    <div>
+                        <Label>Closing Date</Label>
+                        <ReactDatePicker
+                            selected={input.closingAt}
+                            onChange={(date) => setInput({ ...input, closingAt: date })}
+                            dateFormat="yyyy-MM-dd"
+                            placeholderText="Select closing date"
+                            className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 my-1"
+                        />
                     </div> 
                     {
                         loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Post New Job</Button>

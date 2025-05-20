@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import Navbar from '../shared/Navbar'
 import ApplicantsTable from './ApplicantsTable'
 import axios from 'axios';
@@ -15,19 +15,23 @@ const Applicants = () => {
     useEffect(() => {
         const fetchAllApplicants = async () => {
             try {
+                dispatch(setAllApplicants(null));
+                // console.log("This is params",params.id);
                 const res = await axios.get(`${APPLICATION_API_END_POINT}/${params.id}/applicants`, { withCredentials: true });
                 dispatch(setAllApplicants(res.data.job));
             } catch (error) {
                 console.log(error);
             }
         }
+       
         fetchAllApplicants();
-    }, []);
+    }, [dispatch, params.id]);
+    // console.log("This is applicants in UI",applicants);
     return (
         <div>
             <Navbar />
             <div className='max-w-7xl mx-auto'>
-                <h1 className='font-bold text-xl my-5'>Applicants {applicants?.applications?.length}</h1>
+                <h1 className='font-bold text-xl my-5'>Applicants {applicants?.Applications?.length}</h1>
                 <ApplicantsTable />
             </div>
         </div>

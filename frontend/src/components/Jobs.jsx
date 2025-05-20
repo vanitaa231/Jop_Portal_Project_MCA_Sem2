@@ -4,10 +4,12 @@ import FilterCard from './FilterCard'
 import Job from './Job';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
+import useGetAllJobs from '@/hooks/useGetAllJobs';
 
 // const jobsArray = [1, 2, 3, 4, 5, 6, 7, 8];
 
 const Jobs = () => {
+    useGetAllJobs();
     const { allJobs, searchedQuery } = useSelector(store => store.job);
     const [filterJobs, setFilterJobs] = useState(allJobs);
   
@@ -21,11 +23,13 @@ const Jobs = () => {
                     // return job.title.toLowerCase().includes(searchedQuery.toLowerCase()) ||
                 //     job.description.toLowerCase().includes(searchedQuery.toLowerCase()) ||
                 //     job.location.toLowerCase().includes(searchedQuery.toLowerCase())
+                
                     return (
                     job.title.toLowerCase().includes(filterValue.toLowerCase()) ||
                     job.description.toLowerCase().includes(filterValue.toLowerCase()) ||
                     (job.location && job.location.toLowerCase().includes(filterValue.toLowerCase()))
                     );
+                    
             }
             
             // Apply specific filter based on type
@@ -33,7 +37,7 @@ const Jobs = () => {
                 case 'Location':
                     return job.location && job.location.toLowerCase() === filterValue.toLowerCase();
                 case 'Company':
-                    return job.company && job.company.toLowerCase() === filterValue.toLowerCase();
+                    return job.company.name && job.company.name.toLowerCase() === filterValue.toLowerCase();
                 case 'Salary':
                     return checkSalaryRange(job.salary, filterValue);
                 default:
@@ -55,10 +59,10 @@ const checkSalaryRange = (salary, range) => {
     const jobSalary = parseFloat(salary);
     if (isNaN(jobSalary)) return false;
 
-    if (range === '0-40k') return jobSalary <= 40000;
-    if (range === '42k-1L') return jobSalary > 40000 && jobSalary <= 100000;
-    if (range === '1L-5L') return jobSalary > 100000 && jobSalary <= 500000;
-    if (range === '5L+') return jobSalary > 500000;
+    if (range === '0-40k') return jobSalary <= 0.4;
+    if (range === '42k-1L') return jobSalary > 0.4 && jobSalary <= 1;
+    if (range === '1L-5L') return jobSalary > 1 && jobSalary <= 5;
+    if (range === '5L+') return jobSalary > 5;
     
     return false;
 };

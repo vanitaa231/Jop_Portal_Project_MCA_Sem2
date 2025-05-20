@@ -8,6 +8,7 @@ import axios from 'axios';
 import { USER_API_END_POINT } from '@/utils/constant';
 import { setUser } from '@/redux/authSlice';
 import { toast } from 'sonner';
+import logo from '../../../../images/SnapJobs-.png';
 
 const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
@@ -16,9 +17,11 @@ const Navbar = () => {
 
   const logoutHandler = async () => {
     try {
+      console.log('Logging out...');
       const res = await axios.get(`${USER_API_END_POINT}/logout`, {
         withCredentials: true,
       });
+      console.log('Logout response:', res.data);
       if (res.data.success) {
         dispatch(setUser(null));
         navigate('/');
@@ -33,10 +36,10 @@ const Navbar = () => {
   return (
     <div className="bg-white">
       <div className="flex items-center justify-between mx-auto max-w-7xl h-16">
-        <div>
-          <h1 className="text-2xl font-bold">
-            Job<span className="text-[#F83002]">Portal</span>
-          </h1>
+        <div className="p-4">
+          <Link to="/">
+            <img src={logo} alt="Logo" className="h-12 w-auto object-contain" />
+          </Link>
         </div>
         <div className="flex items-center gap-12">
           <ul className="flex font-medium items-center gap-5">
@@ -57,9 +60,9 @@ const Navbar = () => {
                 <li>
                   <Link to="/jobs">Jobs</Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link to="/browse">Browse</Link>
-                </li>
+                </li> */}
               </>
             )}
           </ul>
@@ -110,7 +113,7 @@ const Navbar = () => {
 
                   {/* Menu Items */}
                   <div className="flex flex-col space-y-1 text-gray-600">
-                    {user?.role === 'student' && (
+                    { (
                       <div className="flex items-center gap-2">
                         <User2 size={18} />
                         <Link to="/profile">

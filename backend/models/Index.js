@@ -21,7 +21,7 @@ Job.hasMany(Application, {as: "Applications", foreignKey: 'job_id' });
 Application.belongsTo(Job, { foreignKey: 'job_id' });
 
 // Application belongs to a User (applicant)
-User.hasMany(Application, { foreignKey: 'applicantId' });
-Application.belongsTo(User, { foreignKey: 'applicantId' });
+User.hasMany(Application, { foreignKey: 'userId' });
+Application.belongsTo(User, {as:'applicant', foreignKey: 'userId'  });
 
 export { sequelize, User, Company, Job, Application };

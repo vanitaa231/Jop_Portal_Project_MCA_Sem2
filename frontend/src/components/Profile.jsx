@@ -63,7 +63,7 @@ const Profile = () => {
                         }
                     </div>
                 </div>
-                <div className='grid w-full max-w-sm items-center gap-1.5'>
+                 {user?.role !== 'recruiter' && (<div className='grid w-full max-w-sm items-center gap-1.5'>
                     <Label className="text-md font-bold">Resume</Label>
                     {
                         isResume && user?.profile?.resume ? (
@@ -73,7 +73,7 @@ const Profile = () => {
                             </a>
                         ) : <span>NA</span>
                     }
-                </div>
+                </div>)}
             </div>
             <div className='max-w-4xl mx-auto bg-white rounded-2xl'>
                 <h1 className='font-bold text-lg my-5'>Applied Jobs</h1>

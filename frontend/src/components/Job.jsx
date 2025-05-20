@@ -77,6 +77,8 @@ const Job = ({job}) => {
             <div>
                 <h1 className='font-bold text-lg my-2'>{job?.title}</h1>
                 <p className='text-sm text-gray-600'>{job?.description}</p>
+                <p className='text-sm text-gray-600'>{job?.createdAt.split("T")[0]} to {job?.closingAt.split("T")[0]}</p>
+                
             </div>
             <div className='flex items-center gap-2 mt-4'>
                 <Badge className={'text-blue-700 font-bold'} variant="ghost">{job?.position} Positions</Badge>
@@ -96,6 +98,7 @@ Job.propTypes = {
     job: PropTypes.shape({
         job_id: PropTypes.number, // Added job_id to prop types
         createdAt: PropTypes.string,
+        closingAt: PropTypes.string,
         company: PropTypes.shape({
             logo: PropTypes.string,
             name: PropTypes.string,
@@ -105,7 +108,7 @@ Job.propTypes = {
         position: PropTypes.number,
         jobType: PropTypes.string,
         salary: PropTypes.string,
-        _id: PropTypes.string,
+       // _id: PropTypes.string,
     }).isRequired,
 };
 

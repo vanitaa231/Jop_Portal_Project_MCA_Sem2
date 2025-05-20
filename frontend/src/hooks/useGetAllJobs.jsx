@@ -3,15 +3,19 @@ import { JOB_API_END_POINT } from '@/utils/constant'
 import axios from 'axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
+import { useSearchParams } from 'react-router-dom';
 
 const useGetAllJobs = () => {
     const dispatch = useDispatch();
-    const {searchedQuery} = useSelector(store=>store.job);
+    const [searchParams] = useSearchParams();
+    const query = searchParams.get('query') || '';
+   // const {searchedQuery} = useSelector(store=>store.job);
+    // console.log("This is query",query);
     useEffect(()=>{
+
         const fetchAllJobs = async () => {
             try {
-                const res = await axios.get(`${JOB_API_END_POINT}/get?keyword=${searchedQuery}`,{withCredentials:true});
+                const res = await axios.get(`${JOB_API_END_POINT}/get?keyword=${query}`,{withCredentials:true});
                 if(res.data.success){
                     dispatch(setAllJobs(res.data.jobs));
                 }
@@ -20,7 +24,7 @@ const useGetAllJobs = () => {
             }
         }
         fetchAllJobs();
-    }, [dispatch, searchedQuery])
+    }, [dispatch, query])
 }
 
 export default useGetAllJobs

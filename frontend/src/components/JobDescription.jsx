@@ -21,11 +21,14 @@ const JobDescription = () => {
     const applyJobHandler = async () => {
         try {
             const res = await axios.get(`${APPLICATION_API_END_POINT}/apply/${jobId}`, {withCredentials:true});
-            
+            // console.log("this is response ",res);
             if(res.data.success){
-                setIsApplied(true); // Update the local state
+                setIsApplied(true); 
+                // console.log("This is isapplied",isApplied);// Update the local state
                 const updatedSingleJob = {...singleJob, applications:[...singleJob.applications,{applicant:user?.userId}]}
+                // console.log("This is updated single job",updatedSingleJob);
                 dispatch(setSingleJob(updatedSingleJob)); // helps us to real time UI update
+                // console.log("This is updated shdfuaihiuhfdiu");
                 toast.success(res.data.message);
 
             }
@@ -48,7 +51,7 @@ const JobDescription = () => {
             }
         }
         fetchSingleJob(); 
-    },[jobId,dispatch, user?._id]);
+    },[jobId,dispatch, user?.userId]);
 
     return (
         <div className='max-w-7xl mx-auto my-10'>
@@ -76,7 +79,8 @@ const JobDescription = () => {
                 <h1 className='font-bold my-1'>Experience: <span className='pl-4 font-normal text-gray-800'>{singleJob?.experience} yrs</span></h1>
                 <h1 className='font-bold my-1'>Salary: <span className='pl-4 font-normal text-gray-800'>{singleJob?.salary}LPA</span></h1>
                 <h1 className='font-bold my-1'>Total Applicants: <span className='pl-4 font-normal text-gray-800'>{singleJob?.applications?.length}</span></h1>
-                <h1 className='font-bold my-1'>Posted Date: <span className='pl-4 font-normal text-gray-800'>{singleJob?.createdAt.split("T")[0]}</span></h1>
+                <h1 className='font-bold my-1'>Opening Date: <span className='pl-4 font-normal text-gray-800'>{singleJob?.createdAt.split("T")[0]}</span></h1>
+                <h1 className='font-bold my-1'>Closing Date: <span className='pl-4 font-normal text-gray-800'>{singleJob?.closingAt.split("T")[0]}</span></h1>
             </div>
         </div>
     )

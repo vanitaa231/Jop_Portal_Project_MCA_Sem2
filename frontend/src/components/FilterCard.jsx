@@ -10,7 +10,7 @@ const FilterCard = () => {
     const [selectedValue, setSelectedValue] = useState('')
     const [filterOptions, setFilterOptions] = useState({
         locations: [],
-        industries: [],
+        companies: [],
         salaries: ["0-40k", "42k-1L", "1L-5L", "5L+"] // Default salary ranges
     })
     const dispatch = useDispatch()
@@ -29,7 +29,7 @@ const FilterCard = () => {
                 // Option 2: Calculate from existing Redux jobs data
                 if (allJobs && allJobs.length > 0) {
                     const locations = [...new Set(allJobs.map(job => job.location).filter(Boolean))]
-                    const companies = [...new Set(allJobs.map(job => job.company).filter(Boolean))]
+                    const companies = [...new Set(allJobs.map(job => job.company.name).filter(Boolean))]
                     
                     setFilterOptions(prev => ({
                         ...prev,
@@ -60,7 +60,7 @@ const FilterCard = () => {
         },
         {
             filterType: "Company",
-            array: filterOptions.industries
+            array: filterOptions.companies
         },
         {
             filterType: "Salary",
